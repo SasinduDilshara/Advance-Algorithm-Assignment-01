@@ -26,6 +26,10 @@
  ******************************************************************************/
 package com.algorithm.Trees;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Queue;
@@ -103,6 +107,20 @@ public class BST<Key extends Comparable<Key>, Value> {
      */
     public int size() {
         return size(root);
+    }
+
+    public void print() {
+        print(root);
+    }
+
+    public void print(Node x) {
+        if (x.left != null) {
+            print(x.left);
+        }
+        System.out.println(x.val);
+        if (x.right != null) {
+            print(x.right);
+        }
     }
 
     // return number of key-value pairs in BST rooted at x
@@ -426,13 +444,13 @@ public class BST<Key extends Comparable<Key>, Value> {
         int cmplo = lo.compareTo(x.key);
         int cmphi = hi.compareTo(x.key);
         if (cmplo < 0) keys(x.left, queue, lo, hi);
-        if (cmplo <= 0 && cmphi >= 0) {
+        if (cmplo <= 0 && cmphi >= 0)
             try {
                 queue.put(x.key);
             } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-        }
         if (cmphi > 0) keys(x.right, queue, lo, hi);
     }
 
@@ -475,15 +493,25 @@ public class BST<Key extends Comparable<Key>, Value> {
      * @return the keys in the BST in level order traversal
      */
     public Iterable<Key> levelOrder() {
-        Queue<Key> keys = new LinkedBlockingQueue<Key>();
-        Queue<Node> queue = new LinkedBlockingQueue<Node>();
-        queue.put(root);
+        LinkedBlockingQueue<Key> keys = new LinkedBlockingQueue<Key>();
+        LinkedBlockingQueue<Node> queue = new LinkedBlockingQueue<Node>();
+        try {
+            queue.put(root);
+        } catch (InterruptedException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
         while (!queue.isEmpty()) {
             Node x = queue.poll();
             if (x == null) continue;
-            keys.enqueue(x.key);
-            queue.enqueue(x.left);
-            queue.enqueue(x.right);
+            try {
+                keys.put(x.key);
+                queue.put(x.left);
+                queue.put(x.right);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         }
         return keys;
     }
@@ -534,6 +562,34 @@ public class BST<Key extends Comparable<Key>, Value> {
         return true;
     }
 
+    public static BufferedReader readFile(String file) {
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader(file));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return br;
+    }
+
+    public static void insertFromReadFile(BufferedReader br, BST bst) {
+        String st;
+        int number;
+        int k = 0;
+        while (true) {
+            try {
+                if (!((st = br.readLine()) != null)) break;
+                for (String key: st.split(",")) {
+                    number = Integer.valueOf(key);
+                    bst.put(number, number);
+                    k ++;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            System.out.println("K is :- "+ k);
+        }
+    }
 
     /**
      * Unit tests the {@code BST} data type.
@@ -542,7 +598,41 @@ public class BST<Key extends Comparable<Key>, Value> {
      */
     public static void main(String[] args) {
         BST<Long, Integer> st = new BST<>();
+        String currentDirectory = System.getProperty("user.dir");
 
-//        TODO: Write your code here
+        String insertSet11Path = "/src/com/algorithm/data/insert/set1/data_1.txt";
+        String insertSet12Path = "/src/com/algorithm/data/insert/set1/data_2.txt";
+        String insertSet13Path = "/src/com/algorithm/data/insert/set1/data_3.txt";
+
+        String insertSet21Path = "/src/com/algorithm/data/insert/set2/data_1.txt";
+        String insertSet22Path = "/src/com/algorithm/data/insert/set2/data_2.txt";
+        String insertSet23Path = "/src/com/algorithm/data/insert/set2/data_3.txt";
+
+        String deleteSet11Path = "/src/com/algorithm/data/delete/set1/data_1.txt";
+        String deleteSet12Path = "/src/com/algorithm/data/delete/set1/data_2.txt";
+        String deleteSet13Path = "/src/com/algorithm/data/delete/set1/data_3.txt";
+
+        String deleteSet21Path = "/src/com/algorithm/data/delete/set1/data_1.txt";
+        String deleteSet22Path = "/src/com/algorithm/data/delete/set1/data_2.txt";
+        String deleteSet23Path = "/src/com/algorithm/data/delete/set1/data_3.txt";
+
+        String searchSet11Path = "/src/com/algorithm/data/search/set1/data_1.txt";
+        String searchSet12Path = "/src/com/algorithm/data/search/set1/data_2.txt";
+        String searchSet13Path = "/src/com/algorithm/data/search/set1/data_3.txt";
+
+        String searchSet21Path = "/src/com/algorithm/data/search/set1/data_1.txt";
+        String searchSet22Path = "/src/com/algorithm/data/search/set1/data_2.txt";
+        String searchSet23Path = "/src/com/algorithm/data/search/set1/data_3.txt";
+
+        String[] insertArrayList = { insertSet11Path, insertSet12Path, insertSet13Path,
+                insertSet21Path, insertSet22Path, insertSet23Path };
+
+        for (String insertFile: insertArrayList) {
+            BufferedReader br = readFile(insertFile);
+            insertFromReadFile(br, st);
+        }
+        System.out.println("Size of the tree:- " + st.size());
+//        st.print();
+
     }
 }

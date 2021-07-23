@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Queue;
 import java.util.Random;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * The {@code BST} class represents an ordered symbol table of generic
@@ -581,7 +582,7 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
      * @return all keys in the symbol table as an {@code Iterable}
      */
     public Iterable<Key> keys() {
-        if (isEmpty()) return new Queue<Key>();
+        if (isEmpty()) return new LinkedBlockingQueue<>();
         return keys(min(), max());
     }
 
@@ -600,7 +601,7 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
         if (lo == null) throw new IllegalArgumentException("first argument to keys() is null");
         if (hi == null) throw new IllegalArgumentException("second argument to keys() is null");
 
-        Queue<Key> queue = new Queue<Key>();
+        LinkedBlockingQueue<Key> queue = new LinkedBlockingQueue<>();
         // if (isEmpty() || lo.compareTo(hi) > 0) return queue;
         keys(root, queue, lo, hi);
         return queue;
@@ -608,12 +609,18 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
 
     // add the keys between lo and hi in the subtree rooted at x
     // to the queue
-    private void keys(Node x, Queue<Key> queue, Key lo, Key hi) {
+    private void keys(Node x, LinkedBlockingQueue<Key> queue, Key lo, Key hi) {
         if (x == null) return;
         int cmplo = lo.compareTo(x.key);
         int cmphi = hi.compareTo(x.key);
         if (cmplo < 0) keys(x.left, queue, lo, hi);
-        if (cmplo <= 0 && cmphi >= 0) queue.enqueue(x.key);
+        if (cmplo <= 0 && cmphi >= 0) {
+            try {
+                queue.put(x.key);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         if (cmphi > 0) keys(x.right, queue, lo, hi);
     }
 
