@@ -24,7 +24,7 @@
  *  Modified by Sanath Jayasena
  *
  ******************************************************************************/
-package com.algorithm;
+package com.algorithm.Trees;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -572,23 +572,70 @@ public class BST<Key extends Comparable<Key>, Value> {
         return br;
     }
 
-    public static void insertFromReadFile(BufferedReader br, BST bst) {
+    public static long insertFromReadFile(BufferedReader br, BST bst) {
         String st;
-        int number;
+        long number;
         int k = 0;
+        long startTime;
+        startTime = System.currentTimeMillis();
         while (true) {
             try {
                 if (!((st = br.readLine()) != null)) break;
                 for (String key: st.split(",")) {
-                    number = Integer.valueOf(key);
+                    number = Long.valueOf(key);
                     bst.put(number, number);
                     k ++;
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            System.out.println("K is :- "+ k);
         }
+        System.out.println("Insert K is :- "+ k);
+        return System.currentTimeMillis() - startTime;
+    }
+
+    public static long searchFromReadFile(BufferedReader br, BST bst) {
+        String st;
+        long number;
+        int k = 0;
+        long startTime;
+        startTime = System.currentTimeMillis();
+        while (true) {
+            try {
+                if (!((st = br.readLine()) != null)) break;
+                for (String key: st.split(",")) {
+                    number = Long.valueOf(key);
+                    bst.get(number);
+                    k ++;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("Search K is :- "+ k);
+        return System.currentTimeMillis() - startTime;
+    }
+
+    public static long deleteFromReadFile(BufferedReader br, BST bst) {
+        String st;
+        long number;
+        int k = 0;
+        long startTime;
+        startTime = System.currentTimeMillis();
+        while (true) {
+            try {
+                if (!((st = br.readLine()) != null)) break;
+                for (String key: st.split(",")) {
+                    number = Long.valueOf(key);
+                    bst.delete(number);
+                    k ++;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("Delete K is :- "+ k);
+        return System.currentTimeMillis() - startTime;
     }
 
     /**
@@ -597,7 +644,7 @@ public class BST<Key extends Comparable<Key>, Value> {
      * @param args the command-line arguments
      */
     public static void main(String[] args) {
-        BST<Long, Integer> st = new BST<>();
+        BST<Long, Long> st = new BST<Long, Long>();
         String currentDirectory = System.getProperty("user.dir");
 
         String insertSet11Path = "/src/com/algorithm/data/insert/set1/data_1.txt";
@@ -626,12 +673,41 @@ public class BST<Key extends Comparable<Key>, Value> {
 
         String[] insertArrayList = { insertSet11Path, insertSet12Path, insertSet13Path,
                 insertSet21Path, insertSet22Path, insertSet23Path };
+        String[] deleteArrayList = { deleteSet11Path, deleteSet12Path, deleteSet13Path,
+                deleteSet21Path, deleteSet22Path, deleteSet23Path };
+        String[] searchArrayList = { searchSet11Path, searchSet12Path, searchSet13Path,
+                searchSet21Path, searchSet22Path, searchSet23Path };
+        long[] insertArray = new long[6];
+        long[] searchArray = new long[6];
+        long[] deleteArray = new long[6];
+
+        int index = 0;
 
         for (String insertFile: insertArrayList) {
             BufferedReader br = readFile(currentDirectory + insertFile);
-            insertFromReadFile(br, st);
+            insertArray[index] = insertFromReadFile(br, st);
+            index++;
         }
         System.out.println("Size of the tree:- " + st.size());
+        System.out.println("Insert Operations\n\t Set 1:- "+ insertArray[0] + ", " + insertArray[1] + ", " + insertArray[2] + "\n\t Set 2 :- " + insertArray[3] + ", " + insertArray[4] + ", " + insertArray[5]);
+
+        index = 0;
+        for (String searchFile: searchArrayList) {
+            BufferedReader br = readFile(currentDirectory + searchFile);
+            searchArray[index] = searchFromReadFile(br, st);
+            index++;
+        }
+        System.out.println("Size of the tree:- " + st.size());
+        System.out.println("Search Operations\n\t Set 1:- "+ searchArray[0] + ", " + searchArray[1] + ", " + searchArray[2] + "\n\t Set 2 :- " + searchArray[3] + ", " + searchArray[4] + ", " + searchArray[5]);
+
+        index = 0;
+        for (String deleteFile: deleteArrayList) {
+            BufferedReader br = readFile(currentDirectory + deleteFile);
+            deleteArray[index] = deleteFromReadFile(br, st);
+            index++;
+        }
+        System.out.println("Size of the tree:- " + st.size());
+        System.out.println("Delete Operations\n\t Set 1:- "+ deleteArray[0] + ", " + deleteArray[1] + ", " + deleteArray[2] + "\n\t Set 2 :- " + deleteArray[3] + ", " + deleteArray[4] + ", " + insertArray[5]);
 //        st.print();
 
     }
