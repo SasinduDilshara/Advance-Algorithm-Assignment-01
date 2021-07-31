@@ -1,4 +1,4 @@
-package com.algorithm;
+package com.algorithm.Trees;
 
 import java.util.ArrayList;
 import java.util.Random;

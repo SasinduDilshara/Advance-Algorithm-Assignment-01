@@ -24,10 +24,17 @@
  *  Modified by Sanath Jayasena
  *
  ******************************************************************************/
+package com.algorithm.Trees;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
+import java.util.Queue;
 import java.util.Random;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * The {@code BST} class represents an ordered symbol table of generic
@@ -579,7 +586,7 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
      * @return all keys in the symbol table as an {@code Iterable}
      */
     public Iterable<Key> keys() {
-        if (isEmpty()) return new Queue<Key>();
+        if (isEmpty()) return new LinkedBlockingQueue<>();
         return keys(min(), max());
     }
 
@@ -598,7 +605,7 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
         if (lo == null) throw new IllegalArgumentException("first argument to keys() is null");
         if (hi == null) throw new IllegalArgumentException("second argument to keys() is null");
 
-        Queue<Key> queue = new Queue<Key>();
+        LinkedBlockingQueue<Key> queue = new LinkedBlockingQueue<>();
         // if (isEmpty() || lo.compareTo(hi) > 0) return queue;
         keys(root, queue, lo, hi);
         return queue;
@@ -606,12 +613,18 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
 
     // add the keys between lo and hi in the subtree rooted at x
     // to the queue
-    private void keys(Node x, Queue<Key> queue, Key lo, Key hi) {
+    private void keys(Node x, LinkedBlockingQueue<Key> queue, Key lo, Key hi) {
         if (x == null) return;
         int cmplo = lo.compareTo(x.key);
         int cmphi = hi.compareTo(x.key);
         if (cmplo < 0) keys(x.left, queue, lo, hi);
-        if (cmplo <= 0 && cmphi >= 0) queue.enqueue(x.key);
+        if (cmplo <= 0 && cmphi >= 0) {
+            try {
+                queue.put(x.key);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         if (cmphi > 0) keys(x.right, queue, lo, hi);
     }
 
@@ -716,14 +729,153 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
     }
 
 
+    public static long insertFromReadFile(BufferedReader br, RedBlackBST rst) {
+        String st;
+        long number;
+        int k = 0;
+        long startTime;
+        startTime = System.currentTimeMillis();
+        while (true) {
+            try {
+                if (!((st = br.readLine()) != null)) break;
+                for (String key: st.split(",")) {
+                    number = Long.valueOf(key);
+                    rst.put(number, number);
+                    k ++;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("Insert K is :- "+ k);
+        return System.currentTimeMillis() - startTime;
+    }
+
+    public static long searchFromReadFile(BufferedReader br, RedBlackBST rst) {
+        String st;
+        long number;
+        int k = 0;
+        long startTime;
+        startTime = System.currentTimeMillis();
+        while (true) {
+            try {
+                if (!((st = br.readLine()) != null)) break;
+                for (String key: st.split(",")) {
+                    number = Long.valueOf(key);
+                    rst.get(number);
+                    k ++;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("Search K is :- "+ k);
+        return System.currentTimeMillis() - startTime;
+    }
+
+    public static long deleteFromReadFile(BufferedReader br, RedBlackBST rst) {
+        String st;
+        long number;
+        int k = 0;
+        long startTime;
+        startTime = System.currentTimeMillis();
+        while (true) {
+            try {
+                if (!((st = br.readLine()) != null)) break;
+                for (String key: st.split(",")) {
+                    number = Long.valueOf(key);
+                    rst.delete(number);
+                    k ++;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("Delete K is :- "+ k);
+        return System.currentTimeMillis() - startTime;
+    }
+
+    public static BufferedReader readFile(String file) {
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader(file));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return br;
+    }
+
+
     /**
      * Unit tests the {@code RedBlackBST} data type.
      *
      * @param args the command-line arguments
      */
     public static void main(String[] args) {
-        RedBlackBST<Long, Integer> st = new RedBlackBST<>();
+        RedBlackBST<Long, Long> st = new RedBlackBST<>();
+        String currentDirectory = System.getProperty("user.dir");
 
-//        TODO: Write the code here
+        String insertSet11Path = "/src/com/algorithm/data/insert/set1/data_1.txt";
+        String insertSet12Path = "/src/com/algorithm/data/insert/set1/data_2.txt";
+        String insertSet13Path = "/src/com/algorithm/data/insert/set1/data_3.txt";
+
+        String insertSet21Path = "/src/com/algorithm/data/insert/set2/data_1.txt";
+        String insertSet22Path = "/src/com/algorithm/data/insert/set2/data_2.txt";
+        String insertSet23Path = "/src/com/algorithm/data/insert/set2/data_3.txt";
+
+        String deleteSet11Path = "/src/com/algorithm/data/delete/set1/data_1.txt";
+        String deleteSet12Path = "/src/com/algorithm/data/delete/set1/data_2.txt";
+        String deleteSet13Path = "/src/com/algorithm/data/delete/set1/data_3.txt";
+
+        String deleteSet21Path = "/src/com/algorithm/data/delete/set1/data_1.txt";
+        String deleteSet22Path = "/src/com/algorithm/data/delete/set1/data_2.txt";
+        String deleteSet23Path = "/src/com/algorithm/data/delete/set1/data_3.txt";
+
+        String searchSet11Path = "/src/com/algorithm/data/search/set1/data_1.txt";
+        String searchSet12Path = "/src/com/algorithm/data/search/set1/data_2.txt";
+        String searchSet13Path = "/src/com/algorithm/data/search/set1/data_3.txt";
+
+        String searchSet21Path = "/src/com/algorithm/data/search/set1/data_1.txt";
+        String searchSet22Path = "/src/com/algorithm/data/search/set1/data_2.txt";
+        String searchSet23Path = "/src/com/algorithm/data/search/set1/data_3.txt";
+
+        String[] insertArrayList = { insertSet11Path, insertSet12Path, insertSet13Path,
+                insertSet21Path, insertSet22Path, insertSet23Path };
+        String[] deleteArrayList = { deleteSet11Path, deleteSet12Path, deleteSet13Path,
+                deleteSet21Path, deleteSet22Path, deleteSet23Path };
+        String[] searchArrayList = { searchSet11Path, searchSet12Path, searchSet13Path,
+                searchSet21Path, searchSet22Path, searchSet23Path };
+        long[] insertArray = new long[6];
+        long[] searchArray = new long[6];
+        long[] deleteArray = new long[6];
+
+        int index = 0;
+
+        for (String insertFile: insertArrayList) {
+            BufferedReader br = readFile(currentDirectory + insertFile);
+            insertArray[index] = insertFromReadFile(br, st);
+            index++;
+        }
+        System.out.println("Size of the tree:- " + st.size());
+        System.out.println("Insert Operations\n\t Set 1:- "+ insertArray[0] + ", " + insertArray[1] + ", " + insertArray[2] + "\n\t Set 2 :- " + insertArray[3] + ", " + insertArray[4] + ", " + insertArray[5]);
+
+        index = 0;
+        for (String searchFile: searchArrayList) {
+            BufferedReader br = readFile(currentDirectory + searchFile);
+            searchArray[index] = searchFromReadFile(br, st);
+            index++;
+        }
+        System.out.println("Size of the tree:- " + st.size());
+        System.out.println("Search Operations\n\t Set 1:- "+ searchArray[0] + ", " + searchArray[1] + ", " + searchArray[2] + "\n\t Set 2 :- " + searchArray[3] + ", " + searchArray[4] + ", " + searchArray[5]);
+
+        index = 0;
+        for (String deleteFile: deleteArrayList) {
+            BufferedReader br = readFile(currentDirectory + deleteFile);
+            deleteArray[index] = deleteFromReadFile(br, st);
+            index++;
+        }
+        System.out.println("Size of the tree:- " + st.size());
+        System.out.println("Delete Operations\n\t Set 1:- "+ deleteArray[0] + ", " + deleteArray[1] + ", " + deleteArray[2] + "\n\t Set 2 :- " + deleteArray[3] + ", " + deleteArray[4] + ", " + insertArray[5]);
+//        st.print();
     }
 }
