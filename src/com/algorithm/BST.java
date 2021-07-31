@@ -25,8 +25,10 @@
  *
  ******************************************************************************/
 
+package com.algorithm;
 import com.algorithm.Queue;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Random;
@@ -527,15 +529,140 @@ public class BST<Key extends Comparable<Key>, Value> {
         return true;
     }
 
+    public static void writeData(String file, String times) {
+        try {
+            File myObj = new File(file + ".txt");
+            myObj.createNewFile();
+
+        } catch (IOException e) {
+            System.out.println("An error occurred In File creation.");
+            e.printStackTrace();
+        }
+
+        try {
+            FileWriter myWriter = new FileWriter(file + ".txt");
+            myWriter.write(times);
+            myWriter.close();
+        } catch (IOException e) {
+            System.out.println("An error occurred in file write.");
+            e.printStackTrace();
+        }
+    }
+
+    public static void timeCalculations(String currentDirectory, String file, String set, BST bst) throws FileNotFoundException {
+        String st;
+        long k = 0;
+        Long number;
+        String insertPath = currentDirectory + "/src/com/algorithm/data/insert/"+ set +"/" + file+".txt";
+        String searchPath = currentDirectory + "/src/com/algorithm/data/search/"+ set +"/" + file+".txt";
+        String deletePath = currentDirectory + "/src/com/algorithm/data/delete/"+ set +"/" + file+".txt";
+
+        BufferedReader insertBr = new BufferedReader(new FileReader(insertPath));
+        BufferedReader searchBr = new BufferedReader(new FileReader(searchPath));
+        BufferedReader deleteBr = new BufferedReader(new FileReader(deletePath));
+
+        ArrayList<Long> insertArray = new ArrayList<>();
+        ArrayList<Long> searchArray = new ArrayList<>();
+        ArrayList<Long> deleteArray = new ArrayList<>();
+
+        while (true) {
+            try {
+                if (!((st = insertBr.readLine()) != null)) break;
+                for (String key: st.split(",")) {
+                    number = Long.valueOf(key);
+                    insertArray.add(number);
+                    k = k + 1;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("Number of insertions for file " + set +"/" + file + " is :- " + k);
+        System.out.println("Number of Array Size for insertion file " + set +"/" + file + " is :- " + insertArray.size() + "\n");
+        k = 0;
+
+        while (true) {
+            try {
+                if (!((st = searchBr.readLine()) != null)) break;
+                for (String key: st.split(",")) {
+                    number = Long.valueOf(key);
+                    searchArray.add(number);
+                    k = k + 1;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("Number of Search for file " + set +"/" + file + " is :- " + k);
+        System.out.println("Number of Array Size for search file " + set +"/" + file + " is :- " + searchArray.size() + "\n");
+        k = 0;
+
+        while (true) {
+            try {
+                if (!((st = deleteBr.readLine()) != null)) break;
+                for (String key: st.split(",")) {
+                    number = Long.valueOf(key);
+                    deleteArray.add(number);
+                    k = k+ 1;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("Number of Deletion for file " + set +"/" + file + " is :- " + k);
+        System.out.println("Number of Array Size for deletions file " + set +"/" + file + " is :- " + deleteArray.size() + "\n");
+
+        long startTime = System.nanoTime();
+
+        for (long value: insertArray) {
+            bst.put(value, value);
+        }
+        long insertTime = System.nanoTime() - startTime;
+
+        long afterInsertTime = System.nanoTime();
+
+        for (long value: searchArray) {
+            bst.get(value);
+        }
+
+        long searchTime = System.nanoTime() - afterInsertTime;
+
+        long afterSearchTime = System.nanoTime();
+
+        for (long value: searchArray) {
+            bst.delete(value);
+        }
+        long deleteTime = System.nanoTime() - afterSearchTime;
+
+        writeData( currentDirectory + "/Times/BST/" + set + "-" +file, String.valueOf(insertTime)+","+ String.valueOf(searchTime)+","+ String.valueOf(deleteTime));
+
+        System.out.println("For "+ set + "\\" + file +"\n\tinsert Time "+ insertTime + "\n\tSearch Time " + searchTime + "\n\tDelete Time " + deleteTime);
+
+
+    }
+
 
     /**
      * Unit tests the {@code BST} data type.
      *
      * @param args the command-line arguments
      */
-    public static void main(String[] args) {
-        BST<Long, Integer> st = new BST<>();
+    public static void main(String[] args) throws FileNotFoundException {
+        BST<Long, Long> st = new BST<>();
+        String currentDirectory = System.getProperty("user.dir");
 
-//        TODO: Write your code here
+        File file1 = new File(currentDirectory + "/Times");
+        File file2 = new File(currentDirectory + "/Times/BST");
+        boolean bool = file1.mkdir();
+        bool = file2.mkdir();
+
+        timeCalculations(currentDirectory, "data_1", "set1", st);
+        timeCalculations(currentDirectory, "data_2", "set1", st);
+        timeCalculations(currentDirectory, "data_3", "set1", st);
+
+        timeCalculations(currentDirectory, "data_1", "set2", st);
+        timeCalculations(currentDirectory, "data_2", "set2", st);
+        timeCalculations(currentDirectory, "data_3", "set2", st);
+
     }
 }

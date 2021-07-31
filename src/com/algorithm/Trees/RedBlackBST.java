@@ -24,7 +24,7 @@
  *  Modified by Sanath Jayasena
  *
  ******************************************************************************/
-package com.algorithm;
+package com.algorithm.Trees;
 
 import java.util.ArrayList;
 import java.util.NoSuchElementException;

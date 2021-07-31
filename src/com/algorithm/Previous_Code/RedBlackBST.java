@@ -24,7 +24,7 @@
  *  Modified by Sanath Jayasena
  *
  ******************************************************************************/
-package com.algorithm.Trees;
+package com.algorithm.Previous_Code;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
